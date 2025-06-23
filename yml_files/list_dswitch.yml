@@ -1,0 +1,21 @@
+---
+- name: List vlans in a cluster
+  hosts: localhost
+  become: false
+  gather_facts: false
+  vars_files:
+    - vars.yml
+  
+  tasks:
+    - name: Gather all registered dvswitch
+      community.vmware.vmware_dvswitch_info:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: "{{ vcenter_validate_certs }}"
+      delegate_to: localhost
+      register: dvswitch_info
+    - name: Output dvswitch info
+      debug:
+        msg: "{{ item }}"
+      loop: "{{ dvswitch_info.distributed_virtual_switches }}"

@@ -1,0 +1,24 @@
+---
+- name: List hosts in a cluster
+  hosts: localhost
+  become: false
+  gather_facts: false
+  vars_files:
+    - vars.yml
+ 
+  tasks:
+    - name: Provide information about vCenter clusters
+      community.vmware.vmware_cluster_info:
+        hostname: '{{ vcenter_hostname }}'
+        username: '{{ vcenter_username }}'
+        password: '{{ vcenter_password }}'
+        validate_certs: "{{ vcenter_validate_certs }}"
+        datacenter: '{{ vcenter_datacenter }}'
+      delegate_to: localhost
+      register: cluster_info
+    - name: Output cluster names and host names
+      debug:
+        msg:
+          - "Cluster: {{ item.key }}"
+          - "Hosts: {{ item.value.hosts | map(attribute='name') | list }}"
+      loop: "{{ cluster_info.clusters | dict2items }}"

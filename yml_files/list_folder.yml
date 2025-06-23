@@ -1,0 +1,21 @@
+---
+- name: List folders in a datacenter
+  hosts: localhost
+  become: false
+  gather_facts: false
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Provide information about vCenter folders
+      community.vmware.vmware_folder_info:
+        hostname: '{{ vcenter_hostname }}'
+        username: '{{ vcenter_username }}'
+        password: '{{ vcenter_password }}'
+        validate_certs: "{{ vcenter_validate_certs }}"
+        datacenter: '{{ vcenter_datacenter }}'
+      delegate_to: localhost
+      register: vcenter_folder_info
+    - name: Output paths under vmFolders
+      debug:
+        msg: "{{ item.path }}"
+      loop: "{{ vcenter_folder_info.flat_folder_info }}"

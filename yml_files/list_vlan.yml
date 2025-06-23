@@ -1,0 +1,21 @@
+---
+- name: List vlans in a cluster
+  hosts: localhost
+  become: false
+  gather_facts: false
+  vars_files:
+    - vars.yml
+  
+  tasks:
+    - name: Get all portgroups in dvswitch vDS
+      community.vmware.vmware_dvs_portgroup_find:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: "{{ vcenter_validate_certs }}"
+      delegate_to: localhost
+      register: portgroups_info
+    - name: Output vlan info
+      debug:
+        msg: "{{ item }}"
+      loop: "{{ portgroups_info.dvs_portgroups }}"

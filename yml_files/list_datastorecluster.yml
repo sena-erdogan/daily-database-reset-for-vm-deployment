@@ -1,0 +1,21 @@
+---
+- name: List datastore cluster of datastore
+  hosts: localhost
+  become: false
+  gather_facts: false
+  vars_files:
+    - vars.yml
+ 
+  tasks:
+    - name: Provide information about vCenter datastores
+      community.vmware.vmware_datastore_info:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: "{{ vcenter_validate_certs }}"
+        name: "{{ vcenter_datastore }}"
+      delegate_to: localhost
+      register: datastore_info
+    - name: Output datastore cluster
+      debug:
+        msg: "{{ datastore_info.datastores[0].datastore_cluster }}"
