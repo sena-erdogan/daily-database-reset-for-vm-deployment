@@ -1,1 +1,1 @@
-# database-reset-for-vm-deployment
+# daily-database-reset-for-vm-deployment
